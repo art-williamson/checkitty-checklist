@@ -8,19 +8,30 @@
 
 import UIKit
 
-class AddItemViewController: UITableViewController {
+protocol AddItemViewControllerDelegate: class {
+    func addItemViewControllerDidCancel(_ controller: AddItemViewController)
+    func addItemViewCOntroller(_ controller: AddItemViewController, didFinishAdding: ChecklistItem)
+}
+
+class AddItemViewController: UITableViewController, UITextFieldDelegate {
+    weak var delegate: AddItemViewControllerDelegate?
+
     //MARK: Outlets
     @IBOutlet weak var textField: UITextField!
+    @IBOutlet weak var doneBarButton: UIBarButtonItem!
 
 
     //MARK: Actions
     @IBAction func cancel() {
-        navigationController?.popViewController(animated: true)
+        delegate?.addItemViewControllerDidCancel(self)
     }
 
     @IBAction func done() {
-        print("value of text field \(textField.text)")
-        navigationController?.popViewController(animated: true)
+        let item = ChecklistItem()
+        item.text = textField.text!
+        item.isChecked = false
+
+        delegate?.addItemViewCOntroller(self, didFinishAdding: item)
     }
 
     //MARK: Overrides
@@ -35,5 +46,15 @@ class AddItemViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
             return nil
+    }
+
+    //MARK: Delegates
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let oldText = textField.text!
+        let stringRange = Range(range, in:oldText)!
+        let newText = oldText.replacingCharacters(in: stringRange, with: string)
+
+        doneBarButton.isEnabled = !newText.isEmpty
+        return true
     }
 }

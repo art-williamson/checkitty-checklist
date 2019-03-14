@@ -8,7 +8,21 @@
 
 import UIKit
 
-class CheckListViewController: UITableViewController {
+class CheckListViewController: UITableViewController, AddItemViewControllerDelegate {
+    func addItemViewControllerDidCancel(_ controller: AddItemViewController) {
+        navigationController?.popViewController(animated: true)
+    }
+
+    func addItemViewCOntroller(_ controller: AddItemViewController, didFinishAdding item: ChecklistItem) {
+        let newRowIndex = items.count
+        items.append(item)
+        let indexPath = IndexPath(row: newRowIndex, section: 0)
+        let indexPaths = [indexPath]
+        tableView.insertRows(at: indexPaths, with: .automatic)
+
+        navigationController?.popViewController(animated: true)
+    }
+
     var items: [ChecklistItem]
 
     required init?(coder aDecoder: NSCoder) {
@@ -16,54 +30,44 @@ class CheckListViewController: UITableViewController {
 
         let row0item = ChecklistItem()
         row0item.text = "Walk the dog"
-        row0item.checked = false
+        row0item.isChecked = false
         items.append(row0item)
 
         let row1item = ChecklistItem()
         row1item.text = "Brush my teeth"
-        row1item.checked = true
+        row1item.isChecked = true
         items.append(row1item)
 
         let row2item = ChecklistItem()
         row2item.text = "Learn iOS development"
-        row2item.checked = true
+        row2item.isChecked = true
         items.append(row2item)
 
         let row3item = ChecklistItem()
         row3item.text = "Soccer practice"
-        row3item.checked = false
+        row3item.isChecked = false
         items.append(row3item)
 
         let row4item = ChecklistItem()
         row4item.text = "Eat ice cream"
-        row4item.checked = true
+        row4item.isChecked = true
         items.append(row4item)
 
         super.init(coder: aDecoder)
     }
 
     func configureCheckmark(for cell: UITableViewCell, with item: ChecklistItem) {
-        if item.checked {
-            cell.accessoryType = .checkmark
+        let label = cell.viewWithTag(1001) as! UILabel
+        if item.isChecked {
+            label.text = "√"
         } else {
-            cell.accessoryType = .none
+            label.text = ""
         }
     }
 
     func configureText(for cell: UITableViewCell, with item: ChecklistItem) {
         let label = cell.viewWithTag(1000) as! UILabel
         label.text = item.text
-    }
-
-    @IBAction func addItem() {
-        let newRowIndex = items.count
-        let item = ChecklistItem()
-        item.text = "I am a new row"
-        item.checked = true
-        items.append(item)
-        let indexPath = IndexPath(row: newRowIndex, section: 0)
-        let indexPaths = [indexPath]
-        tableView.insertRows(at: indexPaths, with: .automatic)
     }
 
     //MARK: overrides
@@ -99,6 +103,14 @@ class CheckListViewController: UITableViewController {
         items.remove(at: indexPath.row)
         let indexPaths = [indexPath]
         tableView.deleteRows(at: indexPaths, with: .automatic)
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "AddItem" {
+            let controller = segue.destination as! AddItemViewController
+            controller.delegate = self
+        }
+
     }
 }
 

@@ -10,9 +10,9 @@ import Foundation
 
 class ChecklistItem {
     var text = ""
-    var checked = false
+    var isChecked = false
 
     func toggleChecked() {
-        checked = !checked
+        isChecked = !isChecked
     }
 }
