@@ -8,12 +8,13 @@
 
 import UIKit
 
-class CheckListViewController: UITableViewController, AddItemViewControllerDelegate {
-    func addItemViewControllerDidCancel(_ controller: AddItemViewController) {
+class CheckListViewController: UITableViewController, ItemDetaiLViewController {
+
+    func itemDetailViewControllerDidCancel(_ controller: ItemDetailViewController) {
         navigationController?.popViewController(animated: true)
     }
 
-    func addItemViewCOntroller(_ controller: AddItemViewController, didFinishAdding item: ChecklistItem) {
+    func itemDetailViewController(_ controller: ItemDetailViewController, didFinishAdding item: ChecklistItem) {
         let newRowIndex = items.count
         items.append(item)
         let indexPath = IndexPath(row: newRowIndex, section: 0)
@@ -22,6 +23,17 @@ class CheckListViewController: UITableViewController, AddItemViewControllerDeleg
 
         navigationController?.popViewController(animated: true)
     }
+
+    func itemDetailViewController(_ controller: ItemDetailViewController, didFinishEditing item: ChecklistItem) {
+        if let index = items.index(of: item) {
+            let indexPath = IndexPath(row: index, section: 0)
+            if let cell = tableView.cellForRow(at: indexPath) {
+                configureText(for: cell, with: item)
+            }
+        }
+        navigationController?.popViewController(animated: true)
+    }
+    
 
     var items: [ChecklistItem]
 
@@ -54,6 +66,9 @@ class CheckListViewController: UITableViewController, AddItemViewControllerDeleg
         items.append(row4item)
 
         super.init(coder: aDecoder)
+
+        print("Documents folder is \(documentsDirectory())")
+        print("Data file path is \(dataFilePath())" )
     }
 
     func configureCheckmark(for cell: UITableViewCell, with item: ChecklistItem) {
@@ -68,6 +83,15 @@ class CheckListViewController: UITableViewController, AddItemViewControllerDeleg
     func configureText(for cell: UITableViewCell, with item: ChecklistItem) {
         let label = cell.viewWithTag(1000) as! UILabel
         label.text = item.text
+    }
+
+    func documentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
+    }
+
+    func dataFilePath() -> URL {
+        return documentsDirectory().appendingPathComponent("Checklists.plist")
     }
 
     //MARK: overrides
@@ -107,10 +131,17 @@ class CheckListViewController: UITableViewController, AddItemViewControllerDeleg
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "AddItem" {
-            let controller = segue.destination as! AddItemViewController
+            let controller = segue.destination as! ItemDetailViewController
             controller.delegate = self
         }
 
+        if segue.identifier == "EditItem" {
+                let controller = segue.destination as! ItemDetailViewController
+                controller.delegate = self
+                if let indexPath = tableView.indexPath(for: sender as! UITableViewCell) {
+                    controller.itemToEdit = items[indexPath.row]
+                }
+        }
     }
 }
 
