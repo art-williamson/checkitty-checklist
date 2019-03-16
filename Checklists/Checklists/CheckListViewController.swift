@@ -21,6 +21,8 @@ class CheckListViewController: UITableViewController, ItemDetaiLViewController {
         let indexPaths = [indexPath]
         tableView.insertRows(at: indexPaths, with: .automatic)
 
+        saveChecklistItems()
+
         navigationController?.popViewController(animated: true)
     }
 
@@ -31,6 +33,9 @@ class CheckListViewController: UITableViewController, ItemDetaiLViewController {
                 configureText(for: cell, with: item)
             }
         }
+
+        saveChecklistItems()
+
         navigationController?.popViewController(animated: true)
     }
     
@@ -94,6 +99,34 @@ class CheckListViewController: UITableViewController, ItemDetaiLViewController {
         return documentsDirectory().appendingPathComponent("Checklists.plist")
     }
 
+    func saveChecklistItems() {
+        let encoder = PropertyListEncoder()
+        do {
+            let data = try encoder.encode(items)
+            try data.write(to: dataFilePath(), options: Data.WritingOptions.atomic)
+        }
+        catch {
+            print("Error encoding item array.")
+        }
+    }
+
+//    func loadChecklistItems() {
+//        // 1
+//        let path = dataFilePath()
+//        // 2
+//        if let data = try? Data(contentsOf: path) {
+//            // 3
+//            let decoder = PropertyListDecoder()
+//            do {
+//                // 4
+//                items = try decoder.decode([ChecklistItem].self,
+//            } catch {
+//                from: data)
+//                print("Error decoding item array!")
+//            }
+//        }
+//    }
+
     //MARK: overrides
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -107,10 +140,10 @@ class CheckListViewController: UITableViewController, ItemDetaiLViewController {
             configureCheckmark(for: cell, with: item)
         }
         tableView.deselectRow(at: indexPath, animated: true)
+        saveChecklistItems()
     }
 
-    override func tableView(_ tableView: UITableView,
-                            numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
     }
 
@@ -127,6 +160,7 @@ class CheckListViewController: UITableViewController, ItemDetaiLViewController {
         items.remove(at: indexPath.row)
         let indexPaths = [indexPath]
         tableView.deleteRows(at: indexPaths, with: .automatic)
+        saveChecklistItems()
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
