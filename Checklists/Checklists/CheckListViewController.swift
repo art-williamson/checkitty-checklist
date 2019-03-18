@@ -9,6 +9,9 @@
 import UIKit
 
 class CheckListViewController: UITableViewController, ItemDetaiLViewController {
+    var items = [ChecklistItem]()
+    var checklist: Checklist!
+
 
     func itemDetailViewControllerDidCancel(_ controller: ItemDetailViewController) {
         navigationController?.popViewController(animated: true)
@@ -39,9 +42,6 @@ class CheckListViewController: UITableViewController, ItemDetaiLViewController {
         navigationController?.popViewController(animated: true)
     }
     
-
-    var items: [ChecklistItem]
-
     required init?(coder aDecoder: NSCoder) {
         items = [ChecklistItem]()
 
@@ -110,27 +110,30 @@ class CheckListViewController: UITableViewController, ItemDetaiLViewController {
         }
     }
 
-//    func loadChecklistItems() {
-//        // 1
-//        let path = dataFilePath()
-//        // 2
-//        if let data = try? Data(contentsOf: path) {
-//            // 3
-//            let decoder = PropertyListDecoder()
-//            do {
-//                // 4
-//                items = try decoder.decode([ChecklistItem].self,
-//            } catch {
-//                from: data)
-//                print("Error decoding item array!")
-//            }
-//        }
-//    }
+    func loadChecklistItems() {
+        // 1
+        let path = dataFilePath()
+        // 2
+        if let data = try? Data(contentsOf: path) {
+            // 3
+            let decoder = PropertyListDecoder()
+            do {
+                // 4
+                items = try decoder.decode([ChecklistItem].self,from: data)
+            } catch {
+                print("Error decoding item array!")
+            }
+        }
+    }
 
     //MARK: overrides
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.navigationBar.prefersLargeTitles = true
+        //disable large titles
+        navigationItem.largeTitleDisplayMode = .never
+        //load items from file
+        loadChecklistItems()
+        title = checklist.name
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
