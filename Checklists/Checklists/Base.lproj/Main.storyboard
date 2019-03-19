@@ -25,7 +25,7 @@
                     <navigationItem key="navigationItem" title="Checklists" largeTitleDisplayMode="always" id="Kp6-38-OWT">
                         <barButtonItem key="rightBarButtonItem" title="Add" id="0QO-oX-ieJ">
                             <connections>
-                                <segue destination="Swe-Wv-8Sf" kind="show" id="XI7-WW-L5N"/>
+                                <segue destination="Swe-Wv-8Sf" kind="show" identifier="EditChecklist" id="XI7-WW-L5N"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -74,20 +74,16 @@
                         </sections>
                         <connections>
                             <outlet property="dataSource" destination="Swe-Wv-8Sf" id="iFA-TK-hwR"/>
-                            <outlet property="delegate" destination="Swe-Wv-8Sf" id="TRm-Og-8Uj"/>
+                            <outlet property="delegate" destination="Swe-Wv-8Sf" id="Hui-fy-V2s"/>
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Add Checklist" largeTitleDisplayMode="never" id="yf9-PT-qna">
                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="d4V-Cd-U1a">
                             <connections>
-                                <action selector="cancel" destination="Swe-Wv-8Sf" id="Fjc-pF-Cs7"/>
+                                <action selector="cancel" destination="Swe-Wv-8Sf" id="T2g-Bx-Dbk"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="Done" id="jaq-at-Jlu">
-                            <connections>
-                                <action selector="done" destination="Swe-Wv-8Sf" id="9te-q0-1Oc"/>
-                            </connections>
-                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="Done" id="jaq-at-Jlu"/>
                     </navigationItem>
                     <connections>
                         <outlet property="doneButton" destination="jaq-at-Jlu" id="bwk-DY-fRb"/>
