@@ -19,7 +19,9 @@ class ChecklistItem: NSObject, Codable {
 		checked = !checked
 	}
 
+  //MARK: Notifications
   func scheduleNotification() {
+    removeNotification()
     if shouldRemind && dueDate > Date() {
       //Set up the message title and the message body with thte checklist text
       let content = UNMutableNotificationContent()
@@ -36,8 +38,15 @@ class ChecklistItem: NSObject, Codable {
       // add the notification request to the notification center
       let center = UNUserNotificationCenter.current()
       center.add(request)
-
-      print("Scheduled: \(request) for itemID: \(itemID)")
     }
+  }
+
+  func removeNotification() {
+    let center = UNUserNotificationCenter.current()
+    center.removePendingNotificationRequests(withIdentifiers: ["\(itemID)"])
+  }
+
+  deinit {
+    removeNotification()
   }
 }
